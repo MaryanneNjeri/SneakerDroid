@@ -1,9 +1,9 @@
 import React from 'react';
 import {Container,Content,Text ,Button ,Form,Item,Input,Label,View} from "native-base";
-import { StyleSheet,TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import PhoneInput from 'react-native-phone-input'
-
-
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
   }
 });
-let object={};
+
 export default class HomeScreen extends React.Component {
   constructor(){
     super();
@@ -32,6 +32,11 @@ export default class HomeScreen extends React.Component {
     this.updateInfo = this.updateInfo.bind(this);
     this.renderInfo = this.renderInfo.bind(this);
   }
+  // componentDidMount() {
+  //
+  //   console.log(Constants.privacy)
+  // }
+
   updateInfo() {
     this.setState({
       type: this.phone.getNumberType(),
@@ -51,7 +56,20 @@ export default class HomeScreen extends React.Component {
       userInfo: {
         phone_number: this.phone.getValue(),
         first_name,
-        last_name
+        last_name,
+        device_details:{
+          deviceId:Constants.deviceId,
+          deviceName:Constants.deviceName,
+          deviceYearClass:Constants.deviceYearClass,
+          isDevice:Constants.isDevice
+        },
+        project_details:{
+          sdkVersion:Constants.manifest.sdkVersion,
+          privacy:Constants.manifest.privacy,
+          name:Constants.manifest.slug,
+          version:Constants.manifest.version,
+        }
+
       }
     });
 
@@ -74,7 +92,7 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { userInfo } = this.state;
-
+console.log(userInfo)
 
     return (
        <Container>
@@ -100,7 +118,7 @@ export default class HomeScreen extends React.Component {
                ref={(ref)=>{this.phone = ref;}}
            />
            <View style={styles.submitButton}>
-           <Button warning onPress={()=>{this.submit()}}><Text> Submit </Text></Button>
+           <Button warning onPress={this.submit}><Text> Submit </Text></Button>
            </View>
          </Content>
        </Container>
