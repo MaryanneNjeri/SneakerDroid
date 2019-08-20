@@ -1,12 +1,14 @@
 import React from 'react';
 import {Container,Content,Text ,Button ,Form,Item,Input,Label,View} from "native-base";
-import { StyleSheet,Platform } from 'react-native';
+import {AsyncStorage, StyleSheet,NetInfo} from 'react-native';
 import PhoneInput from 'react-native-phone-input'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import register from '../api/register.api';
+import dataUpload from '../api/dataupload.api';
 
+import moment from 'moment'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -23,6 +25,7 @@ const styles = StyleSheet.create({
   }
 });
 let token="";
+let connection={};
 export default class HomeScreen extends React.Component {
   constructor(){
     super();
@@ -32,17 +35,49 @@ export default class HomeScreen extends React.Component {
       first_name:"",
       last_name:"",
       pickerData: null,
+        connection:{}
     };
-
   }
-  componentDidMount() {
-      this.registerForPushToken();
-      // console.log(Platform)
+
+   componentDidMount() {
+       this.registerForPushToken();
+
+       NetInfo.getConnectionInfo().then(connectionInfo => {
+           connection = connectionInfo;
+
+
+       if (connectionInfo.type === 'wifi') {
+
+           setTimeout(function () {
+                   let data = {
+                       app_version: 500,
+                       participants_id: 19, // the data from the response returns participant-details thus returning an error.
+                       probes_data: [
+                           {
+                               data: {
+                                   name: Constants.name,
+                                   is_system: false,
+                                   is_installed: true
+                               },
+                               logged_time: moment().format('YYYY-MM-DD HH:mm Z'),
+                               probe: 2
+
+                           }
+                       ]
+                   };
+                   dataUpload(data);
+               },
+               20000)
+       } else {
+           console.log('No internet connection')
+       }
+   })
+
   }
 
 
   selectCountry=(country)=>{
-    this.phone.selectCountry(country.cca2.toLowerCase())
+    this.phone.selectCountry(country.cca2.toLowerCase());
     this.setState({cca2: country.cca2
     });
 
@@ -92,7 +127,24 @@ export default class HomeScreen extends React.Component {
     };
     register(user)
   };
+  uploadData = () => {
+      let data={
+          app_version: 500,
+          participants_id:19, // the data from the response returns participant-details thus returning an error.
+          probes_data:[
+              {
+                  data:{
+                      name:Constants.name,
+                      is_system:false,
+                      is_installed: true
+                  },
+                  logged_time: moment().format('YYYY-MM-DD HH:mm Z'),
+                  probe: 2
 
+              }
+              ]
+      }
+  };
   render() {
     return (
        <Container>

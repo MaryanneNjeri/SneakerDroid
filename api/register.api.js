@@ -1,6 +1,8 @@
+import { AsyncStorage } from 'react-native';
 
-export default function register(userInfo){
-    console.log(userInfo)
+export default async function register(userInfo){
+    // console.log(userInfo)
+
     function handleErrors(response) {
         if (!response.ok) {
             alert(response.status);
@@ -19,5 +21,9 @@ export default function register(userInfo){
         body:JSON.stringify(userInfo)
     }).then(handleErrors)
         .then(response=>response.json())
-        .then((response)=>{console.log(response)})
+        .then((response)=>{
+            AsyncStorage.setItem('token', JSON.stringify(response.access_token));
+            console.log(response.participant_details);
+
+        })
 }
