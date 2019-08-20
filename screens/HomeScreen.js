@@ -41,7 +41,7 @@ export default class HomeScreen extends React.Component {
 
    componentDidMount() {
        this.registerForPushToken();
-       console.log(moment().format('YYYY-MM-DD hh:mm:ss Z'))
+       console.log('hello' ,moment().format('YYYY-MM-DD hh:mm:ss [+HHMM|-HHMM]'))
        NetInfo.getConnectionInfo().then(connectionInfo => {
            connection = connectionInfo;
 
