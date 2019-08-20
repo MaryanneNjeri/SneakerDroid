@@ -2,8 +2,11 @@ import React from 'react';
 import {Container,Content,Text ,Button ,Form,Item,Input,Label,View} from "native-base";
 import { StyleSheet } from 'react-native';
 import PhoneInput from 'react-native-phone-input'
+import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
+import register from '../api/register.api';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -18,7 +21,7 @@ const styles = StyleSheet.create({
 
   }
 });
-
+let token="";
 export default class HomeScreen extends React.Component {
   constructor(){
     super();
@@ -29,20 +32,12 @@ export default class HomeScreen extends React.Component {
       last_name:"",
       pickerData: null,
     };
-    this.updateInfo = this.updateInfo.bind(this);
-    this.renderInfo = this.renderInfo.bind(this);
-  }
-  // componentDidMount() {
-  //
-  //   console.log(Constants.privacy)
-  // }
 
-  updateInfo() {
-    this.setState({
-      type: this.phone.getNumberType(),
-      value: this.phone.getValue()
-    });
   }
+  componentDidMount() {
+      this.registerForPushToken();
+  }
+
 
   selectCountry=(country)=>{
     this.phone.selectCountry(country.cca2.toLowerCase())
@@ -50,50 +45,52 @@ export default class HomeScreen extends React.Component {
     });
 
   };
-  submit=()=>{
-    const {first_name,last_name} = this.state;
-    this.setState({
-      userInfo: {
-        phone_number: this.phone.getValue(),
-        first_name,
-        last_name,
-        device_details:{
-          deviceId:Constants.deviceId,
-          deviceName:Constants.deviceName,
-          deviceYearClass:Constants.deviceYearClass,
-          isDevice:Constants.isDevice
-        },
-        project_details:{
-          sdkVersion:Constants.manifest.sdkVersion,
-          privacy:Constants.manifest.privacy,
-          name:Constants.manifest.slug,
-          version:Constants.manifest.version,
-        }
-
+  registerForPushToken=async ()=>{
+      const { status: exstingStatus } = await Permissions.getAsync(
+          Permissions.NOTIFICATIONS,
+      );
+      // only ask if permissions have not already been determined, because ios wont
+      // prompt the user a second time
+      let finalStatus = exstingStatus;
+      if (exstingStatus !== 'granted') {
+          // this will only work on ios  as permission is android are  already granted
+          const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+          finalStatus = status;
       }
-    });
+      // stop here if the user did not grant any permission
+      if (finalStatus !== 'granted') {
+          return;
+      }
+      // get the token that uniquely identifies this device
+      const push = await Notifications.getExpoPushTokenAsync();
+      token = push ;
+
+
+
+  };
+  submit=()=>{
+    const { first_name,last_name } = this.state;
+
+    let user={
+        first_name:first_name,
+        last_name:last_name,
+        phone_number: this.phone.getValue(),
+        fcm_key: token,
+        app_version: Constants.manifest.version,
+        device_details: {
+            deviceId:Constants.deviceId,
+            deviceName: Constants.deviceName,
+            deviceYearClass: Constants.deviceYearClass,
+            isDevice: Constants.isDevice
+        },
+        project_code:'DROID7'
+
+    };
+    register(user)
 
   };
 
-  renderInfo() {
-      return (
-          <View>
-
-            <Text>
-              Type: <Text style={{ fontWeight: "bold" }}>{this.state.type}</Text>
-            </Text>
-            <Text>
-              Value:{" "}
-              <Text style={{ fontWeight: "bold" }}>{this.state.value}</Text>
-            </Text>
-          </View>
-      );
-    }
-
   render() {
-    const { userInfo } = this.state;
-console.log(userInfo)
-
     return (
        <Container>
          <Content contentContainerStyle={styles.container}>
