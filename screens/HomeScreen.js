@@ -41,7 +41,7 @@ export default class HomeScreen extends React.Component {
 
    componentDidMount() {
        this.registerForPushToken();
-
+       console.log(moment().format('YYYY-MM-DD hh:mm:ss Z'))
        NetInfo.getConnectionInfo().then(connectionInfo => {
            connection = connectionInfo;
 
@@ -51,7 +51,7 @@ export default class HomeScreen extends React.Component {
            setTimeout(function () {
                    let data = {
                        app_version: 500,
-                       participants_id: 19, // the data from the response returns participant-details thus returning an error.
+                       participant_id: 19, // the data from the response returns participant-details thus returning an error.
                        probes_data: [
                            {
                                data: {
@@ -59,7 +59,7 @@ export default class HomeScreen extends React.Component {
                                    is_system: false,
                                    is_installed: true
                                },
-                               logged_time: moment().format('YYYY-MM-DD HH:mm Z'),
+                               logged_time: moment().format('YYYY-MM-DD hh:mm:ss Z'),
                                probe: 2
 
                            }
@@ -112,6 +112,7 @@ export default class HomeScreen extends React.Component {
         first_name:first_name,
         last_name:last_name,
         phone_number: this.phone.getValue(),
+        //unfortunately expo ios does not fcm its only supports expo android am using expo push token to identify the device
         fcm_key: token,
         app_version: 500,
         device_details: {
@@ -127,24 +128,7 @@ export default class HomeScreen extends React.Component {
     };
     register(user)
   };
-  uploadData = () => {
-      let data={
-          app_version: 500,
-          participants_id:19, // the data from the response returns participant-details thus returning an error.
-          probes_data:[
-              {
-                  data:{
-                      name:Constants.name,
-                      is_system:false,
-                      is_installed: true
-                  },
-                  logged_time: moment().format('YYYY-MM-DD HH:mm Z'),
-                  probe: 2
 
-              }
-              ]
-      }
-  };
   render() {
     return (
        <Container>
