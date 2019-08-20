@@ -41,7 +41,6 @@ export default class HomeScreen extends React.Component {
 
    componentDidMount() {
        this.registerForPushToken();
-       console.log('hello' ,moment().format('YYYY-MM-DD hh:mm:ss.SSS +HHMM'))
        NetInfo.getConnectionInfo().then(connectionInfo => {
            connection = connectionInfo;
 
@@ -55,7 +54,7 @@ export default class HomeScreen extends React.Component {
                        probes_data: [
                            {
                                data: {
-                                   name: Constants.name,
+                                   name: 'SneakerDroid',
                                    is_system: false,
                                    is_installed: true
                                },
@@ -67,7 +66,7 @@ export default class HomeScreen extends React.Component {
                    };
                    dataUpload(data);
                },
-               20000)
+               1800000)
        } else {
            console.log('No internet connection')
        }

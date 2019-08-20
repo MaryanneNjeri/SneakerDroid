@@ -1,7 +1,7 @@
 import { getToken } from '../functions/getAuthConfig'
 
 export default function dataUpload(data){
-
+    console.log(data)
     function handleErrors(response) {
         if (!response.ok) {
             alert(response.status);
