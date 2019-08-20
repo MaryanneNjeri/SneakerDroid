@@ -23,7 +23,7 @@ export default async function register(userInfo){
         .then(response=>response.json())
         .then((response)=>{
             AsyncStorage.setItem('token', JSON.stringify(response.access_token));
-            console.log(response.participant_details);
+            console.log(response.participant-details);
 
         })
 }

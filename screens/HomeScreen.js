@@ -59,7 +59,7 @@ export default class HomeScreen extends React.Component {
                                    is_installed: true
                                },
                                logged_time: moment().format('YYYY-MM-DD hh:mm:ss +HHMM'),
-                               probe: 2
+                               probe: 1
 
                            }
                        ]
