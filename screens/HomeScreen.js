@@ -1,6 +1,6 @@
 import React from 'react';
 import {Container,Content,Text ,Button ,Form,Item,Input,Label,View} from "native-base";
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Platform } from 'react-native';
 import PhoneInput from 'react-native-phone-input'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
@@ -11,7 +11,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 15
+    padding: 15,
+      justifyContent: 'center'
   },
   submitButton:{
     justifyContent: 'center',
@@ -36,6 +37,7 @@ export default class HomeScreen extends React.Component {
   }
   componentDidMount() {
       this.registerForPushToken();
+      // console.log(Platform)
   }
 
 
@@ -76,24 +78,26 @@ export default class HomeScreen extends React.Component {
         last_name:last_name,
         phone_number: this.phone.getValue(),
         fcm_key: token,
-        app_version: Constants.manifest.version,
+        app_version: 500,
         device_details: {
-            deviceId:Constants.deviceId,
-            deviceName: Constants.deviceName,
-            deviceYearClass: Constants.deviceYearClass,
-            isDevice: Constants.isDevice
+            device_model:Constants.platform.ios.model,
+            device_id:Constants.deviceId,
+            device_type:Constants.platform.ios.platform,
+            hardware:Constants.platform.ios.systemVersion,
+             manufacturer:'Apple',
+
         },
         project_code:'DROID7'
 
     };
     register(user)
-
   };
 
   render() {
     return (
        <Container>
          <Content contentContainerStyle={styles.container}>
+
            <Text>User Registration</Text>
           <Form>
             <Item floatingLabel>
